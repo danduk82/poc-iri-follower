@@ -2,6 +2,14 @@
 version: "2"
 
 services:
+  products:
+    image: danduk82/products:latest
+    container_name: products
+    hostname: products
+    build: ./mockup
+    ports:
+      - "8099:8099"
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     hostname: zookeeper
