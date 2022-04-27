@@ -65,6 +65,9 @@ public class IriSubscriber {
     private static void reactToEvent(IriEvents iri_event) throws IOException {
         String content = makeContent(iri_event);
         System.out.println(content);
+        //ProductWrapper product = ProductWrapper(iri_event.getIRIID());
+        ProductWrapper product = new ProductWrapper(iri_event.getIRIID());
+        System.out.println(product.getProduct().toString());
     }
 
     private static String makeContent(IriEvents iri_event) {
