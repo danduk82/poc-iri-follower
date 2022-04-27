@@ -2,7 +2,6 @@ package iri.events;
 
 import com.google.gson.Gson;
 
-import java.time.Instant;
 import java.util.Date;
 
 public class Product {

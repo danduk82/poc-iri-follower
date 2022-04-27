@@ -68,6 +68,8 @@ public class IriSubscriber {
         //ProductWrapper product = ProductWrapper(iri_event.getIRIID());
         ProductWrapper product = new ProductWrapper(iri_event.getIRIID());
         System.out.println(product.getProduct().toString());
+        System.out.println(product.getProduct().getIritimestamp().toInstant());
+
     }
 
     private static String makeContent(IriEvents iri_event) {
