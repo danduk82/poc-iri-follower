@@ -1,0 +1,1 @@
+{"type":"record","name":"IriEvents","namespace":"iri.events","fields":[{"name":"IRI_ID","type":["null","long"],"default":null},{"name":"TIMESTAMP","type":["null","string"],"default":null}],"connect.name":"iri.events.IriEvents"}

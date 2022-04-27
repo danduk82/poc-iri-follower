@@ -1,18 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.ksqldb</groupId>
-  <artifactId>email-sender</artifactId>
+  <groupId>iri.events</groupId>
+  <artifactId>iri-follower</artifactId>
   <version>0.0.1</version>
 
   <properties>
     <!-- Keep versions as properties to allow easy modification -->
     <java.version>8</java.version>
-    <confluent.version>7.0.1</confluent.version>
-    <kafka.version>2.5.0</kafka.version>
-    <avro.version>1.9.1</avro.version>
-    <slf4j.version>1.7.30</slf4j.version>
-    <sendgrid.version>4.4.8</sendgrid.version>
+    <confluent.version>7.1.0</confluent.version>
+    <kafka.version>3.1.0</kafka.version>
+    <avro.version>1.11.0</avro.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <jackson.version>2.13.2</jackson.version>
     <!-- Maven properties for compilation -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -56,14 +56,29 @@
       <version>${slf4j.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.sendgrid</groupId>
-      <artifactId>sendgrid-java</artifactId>
-      <version>${sendgrid.version}</version>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <!-- Build an executable JAR -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+              <mainClass>iri.events.IriSubscriber</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -104,7 +119,7 @@
           </schemaRegistryUrls>
           <outputDirectory>src/main/avro</outputDirectory>
           <subjectPatterns>
-            <param>possible_anomalies-value</param>
+            <param>iri_events-value</param>
           </subjectPatterns>
           <prettyPrintSchemas>true</prettyPrintSchemas>
         </configuration>
