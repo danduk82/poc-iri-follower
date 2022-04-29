@@ -18,6 +18,8 @@ first genereate the SerDes classes with the Avro schema : `mvn generate-sources`
 
 then open IntelliJ, import the pom.xml and run `IsiSubscriber::main` from there
 
+### create events (mockup)
+run `./scripts/create_events.py`
 
 ## References
 
