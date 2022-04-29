@@ -45,6 +45,9 @@ public class GeoserverAPI {
         SimpleFeatureType schema = null;
         try {
             schema = datastore.getSchema( typeName );
+            System.out.println(String.format("schema = %s",schema.toString()));
+            System.out.println(String.format("schema.getGeometryDescriptor().toString() = %s",schema.getGeometryDescriptor().getCoordinateReferenceSystem().toWKT()));
+            ;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,6 +56,7 @@ public class GeoserverAPI {
         FeatureSource<SimpleFeatureType, SimpleFeature> source = null;
         try {
             source = datastore.getFeatureSource( typeName );
+            System.out.println(String.format("source = %s",source));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,6 +71,7 @@ public class GeoserverAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 //        BBOX bbox =
 //        Envelope bbox = new Envelope(5.8358140744676303, 45.659168946713827, 10.979311848153316, 47.869910020393519);
 

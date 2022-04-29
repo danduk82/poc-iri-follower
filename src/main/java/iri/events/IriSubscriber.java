@@ -27,6 +27,11 @@ public class IriSubscriber {
     // Matches the topic name specified in the ksqlDB CREATE TABLE statement.
     private final static String TOPIC = "iri_events";
 
+    private final static DbConnector dbConnector = new DbConnector("jdbc:postgresql://localhost:61543/postgres", "postgres", "postgres");
+
+    public DbConnector getDbConnector() {
+        return dbConnector;
+    }
 
     private final static DateTimeFormatter formatter =
             DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
@@ -51,12 +56,14 @@ public class IriSubscriber {
             consumer.subscribe(Collections.singletonList(TOPIC));
 
             // connect to geoserver
-            GeoserverAPI geoserver = new GeoserverAPI("http://localhost:61590/geoserver/ows?service=wfs&version=1.1.0&request=GetCapabilities");
-            for (String name: geoserver.getDatastore().getTypeNames()) {
-                System.out.println(name);
-            }
+//            GeoserverAPI geoserver = new GeoserverAPI("http://localhost:61590/geoserver/ows?service=wfs&version=1.1.0&request=GetCapabilities");
+//            for (String name: geoserver.getDatastore().getTypeNames()) {
+//                System.out.println(name);
+//            }
+
             boolean commitOk = true;
             try {
+                System.out.println("ready");
                 while (true) {
                     ConsumerRecords<String, IriEvents> records = consumer.poll(Duration.ofMillis(1000));
                     for (TopicPartition partition : records.partitions()) {
@@ -94,7 +101,8 @@ public class IriSubscriber {
         try {
             productWrapper = new ProductWrapper(iri_event.getIRIID());
             System.out.println(productWrapper.getProduct().toString());
-            System.out.println(productWrapper.getProduct().getIritimestamp().toInstant());
+            System.out.println(productWrapper.getProduct().getIritimestamp());
+            dbConnector.insertProduct(productWrapper.getProduct());
             return false;
         } catch (Exception e) {
             e.printStackTrace();
