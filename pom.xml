@@ -13,6 +13,7 @@
     <avro.version>1.11.0</avro.version>
     <slf4j.version>1.7.36</slf4j.version>
     <jackson.version>2.13.2</jackson.version>
+    <geotools.version>26.1.06</geotools.version>
     <!-- Maven properties for compilation -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -23,6 +24,11 @@
       <id>confluent</id>
       <name>Confluent</name>
       <url>https://packages.confluent.io/maven/</url>
+    </repository>
+    <repository>
+        <id>geosolutions</id>
+        <name>geosolutions</name>
+        <url>https://maven.geo-solutions.it/</url>
     </repository>
   </repositories>
 
@@ -69,6 +75,11 @@
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.9.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-wfs-ng</artifactId>
+      <version>${geotools.version}</version>
     </dependency>
   </dependencies>
 

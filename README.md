@@ -35,3 +35,11 @@ https://docs.confluent.io/platform/current/schema-registry/serdes-develop/index.
 
 https://www.logicbig.com/tutorials/misc/kafka/kafka-manual-commit-async-example.html
 
+### commit sync example
+
+https://www.programcreek.com/java-api-examples/?class=org.apache.kafka.clients.consumer.KafkaConsumer&method=commitSync
+
+### kafka config
+
+offsets commit timeout
+https://kafka.apache.org/documentation/#brokerconfigs_offsets.commit.timeout.ms

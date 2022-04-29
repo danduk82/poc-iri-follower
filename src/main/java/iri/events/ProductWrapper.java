@@ -1,6 +1,5 @@
 package iri.events;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -11,9 +10,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 public class ProductWrapper {
     URI uri;
@@ -23,10 +19,13 @@ public class ProductWrapper {
     public ProductWrapper(Long product_id) {
         objectMapper = new ObjectMapper();
         uri = URI.create(String.format("http://localhost:8099/products/%d", product_id));
+        this.product=null;
+
         try {
             this.product = objectMapper.readValue(sendGet(), Product.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("got an error in ProductWrapper");
+            //e.printStackTrace();
         }
 
     }
@@ -38,7 +37,7 @@ public class ProductWrapper {
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String result = "";
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
+        try (CloseableHttpResponse response = httpClient.execute(request)){
 
             // Get HttpResponse Status
             System.out.println(response.getStatusLine().toString());
