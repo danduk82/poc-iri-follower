@@ -5,6 +5,9 @@ try:
 except IndexError:
     c = 0
 
+# in DB directly
+# INSERT INTO public.product (iri_id,product_id,cell_id,longitude,latitude,iritimestamp) VALUES (1,1,'212-1223-123-1',10.37156293656584,46.44352198898034,'2022-05-02T16:25:57Z');
+
 try:
     while True:
         #timestamp = datetime.datetime.fromtimestamp(random.randint(1642222222,1652462222)).strftime("%Y-%m-%dT%H:%M:%S")

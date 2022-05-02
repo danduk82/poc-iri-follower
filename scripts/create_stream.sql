@@ -11,3 +11,9 @@ CREATE STREAM iri_events (
     timestamp_format = 'yyyy-MM-dd''T''HH:mm:ssZ',
     VALUE_AVRO_SCHEMA_FULL_NAME = 'iri.events.IriEvents'
 );
+
+CREATE STREAM products WITH (
+    kafka_topic = 'products.public.product',
+    value_format = 'avro',
+    key_format = 'avro'
+);

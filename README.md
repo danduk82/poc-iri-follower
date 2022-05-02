@@ -8,7 +8,11 @@ This poc is based on [this ksqldb tutorial](https://docs.ksqldb.io/en/latest/tut
 
 1) `docker-compose up -d --build` this launches the services
 
-2) login into ksqldb-cli container and create the kafka stream (you must wait about one minute before doing this)
+2) setup debezium replication
+   
+   `curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ -d @debezium/products-dz-config.json`
+
+3) login into ksqldb-cli container and create the kafka stream (you must wait about one minute before doing this)
 `docker exec -it ksqldb-cli ksql http://ksqldb-server:8088`
 and copy-paste the SQL script from `./scripts/create_stream.sql` int the ksql shell
 
@@ -26,6 +30,12 @@ run `./scripts/create_events.py`
 ### debezium + postgis (pg v. 9.5)
 
 https://github.com/52North/postgis-kafka-cdc/blob/master/postgis-debezium/Dockerfile
+
+### debezium auto-create topics
+
+https://debezium.io/blog/2020/09/15/debezium-auto-create-topics/
+
+
 
 ### SerDes avro, protobuf and json
 

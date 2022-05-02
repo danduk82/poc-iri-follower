@@ -1,0 +1,21 @@
+{
+  "name": "iri-data-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "plugin.name": "pgoutput",
+    "database.hostname": "products-db",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname" : "postgres",
+    "database.server.name": "products",
+    "table.include.list": "public.product",
+
+    "column.blacklist": "public.product.id, public.product.cell_id, public.product.product_id, public.product.latitude, public.product.longitude",
+
+    "topic.creation.default.replication.factor": 1,
+    "topic.creation.default.partitions": 8,
+    "topic.creation.default.cleanup.policy": "compact",
+    "topic.creation.default.compression.type": "lz4"
+  }
+}
