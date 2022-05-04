@@ -1,11 +1,9 @@
 SET standard_conforming_strings = OFF;
 BEGIN;
-CREATE TABLE "public"."product" ( "id" SERIAL, CONSTRAINT "product_pk" PRIMARY KEY ("id") );
-ALTER TABLE "public"."product" ADD COLUMN "iri_id" NUMERIC(10,0);
-ALTER TABLE "public"."product" ADD COLUMN "product_id" NUMERIC(20,0);
+CREATE TABLE "public"."product" ( "iri_id" BIGSERIAL, CONSTRAINT "product_pk" PRIMARY KEY ("iri_id") );
+ALTER TABLE "public"."product" ADD COLUMN "product_id" BIGINT;
 ALTER TABLE "public"."product" ADD COLUMN "cell_id" VARCHAR;
 ALTER TABLE "public"."product" ADD COLUMN "longitude" DOUBLE PRECISION ;
 ALTER TABLE "public"."product" ADD COLUMN "latitude" DOUBLE PRECISION ;
-ALTER TABLE "public"."product" ADD COLUMN "iritimestamp" DATE ;
-CREATE INDEX idx_iri_id ON "public"."product" (iri_id);
+ALTER TABLE "public"."product" ADD COLUMN "iritimestamp" TIMESTAMP WITH TIME ZONE;
 COMMIT;
