@@ -9,7 +9,7 @@ except IndexError:
     c = 0
 
 # in DB directly
-# INSERT INTO public.product (iri_id,product_id,cell_id,longitude,latitude,iritimestamp) VALUES (1,1,'212-1223-123-1',10.37156293656584,46.44352198898034,'2022-05-02T16:25:57Z');
+# INSERT INTO public.product (product_id,cell_id,longitude,latitude,iritimestamp) VALUES (1,'212-1223-123-1',10.37156293656584,46.44352198898034,'2022-05-02T16:25:57Z');
 
 BBOX_CH = (
     (5.8358140744676303, 45.659168946713827),
@@ -28,7 +28,6 @@ try:
         )
         # event_str=f"INSERT INTO iri_events (iri_id, timestamp) VALUES ({random.randint(0,1000000)},'{timestamp}');"
         product_payload = {
-            "iri_id": iri_id,
             "cell_id": "%03d-%02d-%05d-%01d"
             % (randint(0, 999), randint(0, 99), randint(0, 99999), randint(0, 9)),
             "product_id": randint(1, 2),
@@ -40,10 +39,11 @@ try:
         r = requests.post(
             url,
             data=json.dumps(product_payload),
-            headers={"Content-Encoding": "application/json"},
+            headers={"Content-Type": "application/json"},
         )
         print(r.content)
-        time.sleep(random.randint(1, 2))
+        time.sleep(random.randint(0, 1))
         c += 1
+
 except KeyboardInterrupt:
     exit(0)

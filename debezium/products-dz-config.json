@@ -11,7 +11,7 @@
     "database.server.name": "products",
     "table.include.list": "public.product",
 
-    "column.blacklist": "public.product.id, public.product.cell_id, public.product.product_id, public.product.latitude, public.product.longitude",
+    "column.blacklist": "public.product.cell_id, public.product.product_id, public.product.latitude, public.product.longitude",
     "time.precision.mode": "adaptive",
     "decimal.handling.mode": "double",
     "topic.creation.default.replication.factor": 1,

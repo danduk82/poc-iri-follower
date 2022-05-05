@@ -73,7 +73,13 @@ public class IriSubscriber {
                         List<ConsumerRecord<String, GenericRecord>> partitionRecords = records.records(partition);
                         commitOk = true;
                         for (ConsumerRecord<String, GenericRecord> record : partitionRecords) {
-                            final GenericRecord value = (GenericRecord) record.value().get("after");
+                            final GenericRecord value;
+                            try {
+                                value = (GenericRecord) record.value().get("after");
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                                continue;
+                            }
                             if (value != null) {
                                 if (reactToEvent(value)){
                                     commitOk = false;
