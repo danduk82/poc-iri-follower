@@ -3,6 +3,8 @@ package iri.events;
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -25,7 +27,7 @@ public class IriSubscriber {
     // Matches the Schema Registry port specified in the Docker Compose file.
     private final static String SCHEMA_REGISTRY_URL = "http://localhost:8081";
     // Matches the topic name specified in the ksqlDB CREATE TABLE statement.
-    private final static String TOPIC = "iri_events";
+    private final static String TOPIC = "products.public.product";
 
     private final static DbConnector dbConnector = new DbConnector("jdbc:postgresql://localhost:61543/postgres", "postgres", "postgres");
 
@@ -48,11 +50,11 @@ public class IriSubscriber {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         //props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         props.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY_URL);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
-        props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
+        //props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
 
-        try (final KafkaConsumer<String, IriEvents> consumer = new KafkaConsumer<>(props)) {
+        try (final KafkaConsumer<String, GenericRecord> consumer = new KafkaConsumer<>(props)) {
             consumer.subscribe(Collections.singletonList(TOPIC));
 
             // connect to geoserver
@@ -65,13 +67,19 @@ public class IriSubscriber {
             try {
                 System.out.println("ready");
                 while (true) {
-                    ConsumerRecords<String, IriEvents> records = consumer.poll(Duration.ofMillis(1000));
+                    ConsumerRecords<String, GenericRecord> records = consumer.poll(Duration.ofMillis(1000));
                     for (TopicPartition partition : records.partitions()) {
                         System.out.println(String.format("partition: %s",partition.toString()));
-                        List<ConsumerRecord<String, IriEvents>> partitionRecords = records.records(partition);
+                        List<ConsumerRecord<String, GenericRecord>> partitionRecords = records.records(partition);
                         commitOk = true;
-                        for (ConsumerRecord<String, IriEvents> record : partitionRecords) {
-                            final IriEvents value = record.value();
+                        for (ConsumerRecord<String, GenericRecord> record : partitionRecords) {
+                            final GenericRecord value;
+                            try {
+                                value = (GenericRecord) record.value().get("after");
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                                continue;
+                            }
                             if (value != null) {
                                 if (reactToEvent(value)){
                                     commitOk = false;
@@ -92,14 +100,15 @@ public class IriSubscriber {
         }
     }
 
-    private static boolean reactToEvent(IriEvents iri_event) throws IOException {
+    private static boolean reactToEvent(GenericRecord iri_event) throws IOException {
+
         String content = makeContent(iri_event);
         System.out.println(content);
         //ProductWrapper product = ProductWrapper(iri_event.getIRIID());
 
         ProductWrapper productWrapper = null;
         try {
-            productWrapper = new ProductWrapper(iri_event.getIRIID());
+            productWrapper = new ProductWrapper((Long) iri_event.get("iri_id"));
             System.out.println(productWrapper.getProduct().toString());
             System.out.println(productWrapper.getProduct().getIritimestamp());
             dbConnector.insertProduct(productWrapper.getProduct());
@@ -111,11 +120,10 @@ public class IriSubscriber {
 
     }
 
-    private static String makeContent(IriEvents iri_event) {
+    private static String makeContent(GenericRecord iri_event) {
         return String.format("Received new IRI, with IRI_ID = %s created at time: %s",
-                iri_event.getIRIID(),
-                iri_event.getTIMESTAMP(),
-                formatter.format(Instant.parse(iri_event.getTIMESTAMP())));
+                iri_event.get("iri_id"),
+                iri_event.get("iritimestamp"));
     }
 
 }

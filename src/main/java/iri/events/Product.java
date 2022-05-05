@@ -2,7 +2,6 @@ package iri.events;
 
 import com.google.gson.Gson;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Product {
@@ -11,7 +10,7 @@ public class Product {
     Timestamp iritimestamp;
     Float longitude;
     Float latitude;
-    int id;
+    int iri_id;
     public String toString(){
         Gson gson = new Gson();
         String json = gson.toJson(this);
@@ -57,11 +56,11 @@ public class Product {
         this.latitude = latitude;
     }
 
-    public int getId() {
-        return id;
+    public int getIri_id() {
+        return iri_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIri_id(int iri_id) {
+        this.iri_id = iri_id;
     }
 }

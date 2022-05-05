@@ -2,10 +2,9 @@ package iri.events;
 
 import java.sql.*;
 import java.util.Properties;
-import org.geotools.data.postgis.WKBAttributeIO;
+
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.WKBWriter;
@@ -44,7 +43,7 @@ public class DbConnector {
              PreparedStatement pstmt = conn.prepareStatement(SQL,
                      Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setInt(1, product.getId());
+            pstmt.setInt(1, product.getIri_id());
             pstmt.setLong(2, product.getProduct_id());
             pstmt.setTimestamp(3, product.getIritimestamp());
             GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();

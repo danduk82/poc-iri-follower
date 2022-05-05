@@ -10,6 +10,53 @@ services:
     ports:
       - "8099:8099"
 
+  products-db:
+    image: postgis/postgis:12-3.2-alpine
+    user: postgres
+    ports:
+      - 61544:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_wal_senders=1"
+
+
+  debezium:
+    image: debezium/connect:1.9.2.Final
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./debezium:/debezium
+    environment:
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: my_connect_configs
+      OFFSET_STORAGE_TOPIC: my_connect_offsets
+      KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_TOPIC_CREATION_ENABLE: "true"
+      BOOTSTRAP_SERVERS: "broker:9092"
+
+
+  avro-consumer:
+    image: debezium/connect:1.9.2.Final
+    command:
+      - /kafka/bin/kafka-console-consumer.sh
+      - --bootstrap-server broker:29092
+      - --property print.key=true
+      - --formatter io.confluent.kafka.formatter.AvroMessageFormatter
+      - --property schema.registry.url=http://schema-registry:8081
+      - --topic db.products.fullproduct
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     hostname: zookeeper
@@ -53,7 +100,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
 
   ksqldb-server:
-    image: confluentinc/ksqldb-server:0.24.0
+    image: confluentinc/ksqldb-server:0.25.1
     hostname: ksqldb-server
     container_name: ksqldb-server
     depends_on:
@@ -82,7 +129,7 @@ services:
       KSQL_CONNECT_PLUGIN_PATH: "/usr/share/kafka/plugins"
 
   ksqldb-cli:
-    image: confluentinc/ksqldb-cli:0.24.0
+    image: confluentinc/ksqldb-cli:0.25.1
     container_name: ksqldb-cli
     depends_on:
       - broker
