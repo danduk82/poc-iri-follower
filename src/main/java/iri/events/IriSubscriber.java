@@ -63,6 +63,10 @@ public class IriSubscriber {
 //                System.out.println(name);
 //            }
 
+            // TODO: scheduled task
+            // run every xx time -> publish event
+            // service (spring comp. @service) -> listener of these events
+            // spring cloud bus to use it should extend "RemoteApplicationEvent"
             boolean commitOk = true;
             try {
                 System.out.println("ready");
