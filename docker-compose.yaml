@@ -50,12 +50,17 @@ services:
   avro-consumer:
     image: debezium/connect:1.9.2.Final
     command:
-      - /kafka/bin/kafka-console-consumer.sh
-      - --bootstrap-server broker:29092
-      - --property print.key=true
-      - --formatter io.confluent.kafka.formatter.AvroMessageFormatter
-      - --property schema.registry.url=http://schema-registry:8081
-      - --topic db.products.fullproduct
+      - "/kafka/bin/kafka-console-consumer.sh"
+      - "--bootstrap-server"
+      - "broker:29092"
+      - "--property"
+      - "print.key=true"
+      - "--formatter"
+      - "io.confluent.kafka.formatter.AvroMessageFormatter"
+      - "--property"
+      - "schema.registry.url=http://schema-registry:8081"
+      - "--topic"
+      - "db.products.fullproduct"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
