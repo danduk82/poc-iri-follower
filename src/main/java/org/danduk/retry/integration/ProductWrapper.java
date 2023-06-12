@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.danduk.retry.GisServiceException;
 import org.danduk.retry.domain.mapper.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class ProductWrapper {
 
     }
 
-    public Product getProductById(Long product_id){
+    public Product getProductById(Long product_id) throws GisServiceException {
         uri = URI.create(String.format("http://localhost:8099/products/%d", product_id));
         this.product = null;
 
@@ -38,7 +39,7 @@ public class ProductWrapper {
             this.product = objectMapper.readValue(this.sendGet(), Product.class);
         } catch (Exception e) {
             logger.error("got an error in ProductWrapper");
-            e.printStackTrace();
+            throw new GisServiceException(e);
         }
         return this.product;
     }
