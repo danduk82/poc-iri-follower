@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.FixedDelayStrategy;
+import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -30,17 +32,22 @@ public class MessageConsumer {
      private final KafkaNotificationUtil kafkaNotificationUtil;
      private final ObjectMapper mapper = new ObjectMapper();
      static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-     @Value("${poc.topic-name}")
-     String productIriEventTopic;
+
 
      public MessageConsumer(ProductService productService, KafkaNotificationUtil kafkaNotificationUtil) {
           this.productService = productService;
           this.kafkaNotificationUtil = kafkaNotificationUtil;
      }
 
-     @RetryableTopic(attempts = "3",
-                backoff = @Backoff(delay = 15000, maxDelay = 120000, multiplier = 2))
-     @KafkaListener(topics = "${poc.topic-name}")
+     @RetryableTopic(
+             attempts = "#{'${poc.retry.maxRetryAttempts}'}",
+             autoCreateTopics = "#{'${poc.retry.autoCreateRetryTopics}'}",
+             backoff = @Backoff(delayExpression = "#{'${poc.retry.retryIntervalMilliseconds}'}", multiplierExpression = "#{'${poc.retry.retryBackoffMultiplier}'}"),
+             fixedDelayTopicStrategy = FixedDelayStrategy.MULTIPLE_TOPICS,
+             timeout = "#{'${poc.retry.maxRetryDurationMilliseconds}'}",
+             topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
+
+     @KafkaListener(topics = "${poc.topics.topic-name}")
      public void processMessage(ConsumerRecord<String, String> record,
                                 Acknowledgment ack,
                                 @Header(KafkaHeaders.OFFSET) final Long offset) throws GisServiceException {

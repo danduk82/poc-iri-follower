@@ -36,10 +36,8 @@ server:
   port: 9001
 
 poc:
-  topic-name: "products.public.product"
   topics:
-    itemCreateTopic: "create-item"
-    itemUpdateTopic: "update-item"
+    topic-name: "products.public.product"
     retryTopic: "retry"
   retry:
     retryIntervalMilliseconds: 10000
