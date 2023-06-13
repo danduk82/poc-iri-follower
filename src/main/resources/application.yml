@@ -23,14 +23,20 @@ spring:
 #      detection-strategy: annotated
 #  flyway:
 #    schemas: kafka_retry_with_delay
+  kafka:
+    listener:
+      ack-mode: manual
+    bootstrap-servers: localhost:29092
+    consumer:
+      auto-offset-reset: "${KAFKA_AUTO_OFFSET_RESET:earliest}"
+      group-id: ${FLICC_GIS_CONSUMER_GROUP:consumer-service}
+
 
 server:
   port: 9001
 
-kafka:
-  bootstrap-servers: localhost:9092
-
 poc:
+  topic-name: "products.public.product"
   topics:
     itemCreateTopic: "create-item"
     itemUpdateTopic: "update-item"

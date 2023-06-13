@@ -1,4 +1,4 @@
-package org.danduk.retry.domain.mapper;
+package org.danduk.retry.domain.dto;
 
 import com.google.gson.Gson;
 

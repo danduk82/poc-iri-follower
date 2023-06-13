@@ -9,7 +9,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.danduk.retry.GisServiceException;
-import org.danduk.retry.domain.mapper.Product;
+import org.danduk.retry.domain.dto.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URI;
 
 @Service
-public class ProductWrapper {
+public class ProductService {
     URI uri;
     Product product;
     ObjectMapper objectMapper;
@@ -26,7 +26,7 @@ public class ProductWrapper {
     static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
-    public ProductWrapper() {
+    public ProductService() {
         this.objectMapper = new ObjectMapper();
 
     }
