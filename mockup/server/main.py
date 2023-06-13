@@ -1,14 +1,7 @@
-from typing import Optional
-
-import random
-from random import randint
 import datetime
-from typing import List
 import databases
 import sqlalchemy
 from fastapi import FastAPI, status
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 import os
 import urllib
 from pydantic import BaseModel
@@ -103,6 +96,8 @@ async def update_product(iri_id: int, payload: ProductIn):
 
 @app.get("/products/{iri_id}/", response_model=Product, status_code=status.HTTP_200_OK)
 async def read_products(iri_id: int):
+    if iri_id % 2 == 0:
+        raise Exception
     query = products.select().where(products.c.iri_id == iri_id)
     return await database.fetch_one(query)
 

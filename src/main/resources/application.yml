@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: poc-retry-with-delay
+
+  cloud:
+    schemaRegistryClient:
+      endpoint: "http://localhost:8081"
+#  datasource:
+#    driverClassName: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    username: postgres
+#    password: postgres
+#  jpa:
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#    properties:
+#      hibernate:
+#        default_schema: kafka_retry_with_delay
+#    hibernate:
+#      ddl-auto: validate
+#    generate-ddl: false
+#  data:
+#    rest:
+#      detection-strategy: annotated
+#  flyway:
+#    schemas: kafka_retry_with_delay
+  kafka:
+    listener:
+      ack-mode: manual
+    bootstrap-servers: localhost:29092
+    consumer:
+      auto-offset-reset: "${KAFKA_AUTO_OFFSET_RESET:earliest}"
+      group-id: ${FLICC_GIS_CONSUMER_GROUP:consumer-service}
+
+
+server:
+  port: 9001
+
+poc:
+  topics:
+    topic-name: "products.public.product"
+    retryTopic: "retry"
+  retry:
+    retryIntervalMilliseconds: 10000
+    maxRetryDurationMilliseconds: 60000
+    retryBackoffMultiplier: 2
+    maxRetryAttempts: 4
+    autoCreateRetryTopics: true

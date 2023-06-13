@@ -17,28 +17,29 @@ BBOX_CH = (
     (10.979311848153316, 47.869910020393519),
 )
 
-# conn = psycopg2.connect(
-#     dbname="geodata", user="postgres", password="password", host="localhost"
-# )
-conn = psycopg2.connect(service="adn_flicc_geodata")
+conn = psycopg2.connect(
+    dbname="postgres", user="postgres", password="postgres", host="localhost", port=61544
+)
+#conn = psycopg2.connect(service="adn_flicc_geodata")
 
 
 cur = conn.cursor()
 
 # get the last id
-cur.execute("select max(iri_id) from geodata_yadn.t_location ;")
+cur.execute("select max(iri_id) from  public.product;")
 try:
     nb_id = cur.fetchall()[0][0] + 1
 except TypeError:
     nb_id = 1
 
 
-sql = """INSERT INTO geodata_yadn.t_location (IRI_ID, WKB_GEOMETRY, PRODUCT_ID, TARGET_LIID, TARGET_ADDRESS, CELL_ID, IRI_TIMESTAMP, AZIMUTH,
-						CTL_DATE_CREATED, CTL_CREATED_BY)
-VALUES ({iri_id}, ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326), {product_id},
-		NULL, '+4131333284 XY_16_AB_CD_IRI DD_GG_6655111223', '{cell_id}', '{iritimestamp}', 290, NOW(),
-		'geodata_yadn');"""
-
+# sql = """INSERT INTO geodata_yadn.t_location (IRI_ID, WKB_GEOMETRY, PRODUCT_ID, TARGET_LIID, TARGET_ADDRESS, CELL_ID, IRI_TIMESTAMP, AZIMUTH,
+# 						CTL_DATE_CREATED, CTL_CREATED_BY)
+# VALUES ({iri_id}, ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326), {product_id},
+# 		NULL, '+4131333284 XY_16_AB_CD_IRI DD_GG_6655111223', '{cell_id}', '{iritimestamp}', 290, NOW(),
+# 		'geodata_yadn');"""
+sql = """INSERT INTO public.product (product_id,cell_id,longitude,latitude,iritimestamp)
+         VALUES ({product_id},'{cell_id}',{longitude}, {latitude},'{iritimestamp}');"""
 try:
     for c in range(nb_id, nb_id + nb_items):
         iri_id = c
