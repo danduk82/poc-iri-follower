@@ -43,16 +43,14 @@ public class MessageConsumer {
      @KafkaListener(topics = "${poc.topic-name}")
      public void processMessage(ConsumerRecord<String, String> record,
                                 Acknowledgment ack,
-                                @Header(KafkaHeaders.OFFSET) final Long offset) {
+                                @Header(KafkaHeaders.OFFSET) final Long offset) throws GisServiceException {
           try {
                Long productId = kafkaNotificationUtil.getNodeByName(this.mapper.readTree(record.value()),"iri_id").asLong();
-               try {
-                    Product product = this.productService.getProductById(productId);
-                    logger.info(product.toString());
-               }
-               catch (final Exception e) {
-                    throw new GisServiceException(e);
-               }
+               Product product = this.productService.getProductById(productId);
+               logger.info(product.toString());
+          }
+          catch (GisServiceException e) {
+               throw e;
           }
           catch (Exception e){
                System.out.println(record.toString());
