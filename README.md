@@ -1,13 +1,20 @@
-# A bit of R&D on kafka streams and debezium
+# A bit of R&D on kafka, debezium and RetryableTopic
 
-The goal of the POC is to :
+The goal of the POC is to test the RetryableTopics feature of spring-boot
 
-- write a line in a product database
+It works like this:
+
+- a new line is written in a product database
 - have Debezium emit the ID of the new object to kafka
-- a follower takes this ID
-- the follower makes a REST GET request on the product service
-- it stores the point in a postgis database
+- a consumer takes this ID
+- the consumer makes a REST GET request on the product service
+- it does a stdout print of the full message if successful
+- it register it the retryable topics if not successful for further processing
 
+learn more about spring-boot kafka retryable topics [here](https://docs.spring.io/spring-kafka/api/org/springframework/kafka/retrytopic/RetryTopicConfigurer.html) and [here](https://docs.spring.io/spring-kafka/api/org/springframework/kafka/retrytopic/RetryTopicConfigurer.html)
+
+
+(deprecated)
 we also use the confluent schema-registry for usage with Avro, and KSQLDB as QOL tool.
 
 ![schema of the different services working together](./schema.jpeg)
@@ -24,19 +31,41 @@ This poc is partially based on [this ksqldb tutorial](https://docs.ksqldb.io/en/
 
    `curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ -d @debezium/products-dz-config.json`
 
-3. login into ksqldb-cli container and create the kafka stream (you must wait about one minute before doing this)
+3. (deprecated) login into ksqldb-cli container and create the kafka stream (you must wait about one minute before doing this)
    `docker exec -it ksqldb-cli ksql http://ksqldb-server:8088`
    and copy-paste the SQL script from `./scripts/create_stream.sql` int the ksql shell
 
 ### Run the java application in intelliJ
 
-first genereate the SerDes classes with the Avro schema : `mvn generate-sources`
+simply open IntelliJ, import the pom.xml and run `RetryApplication::main` from there
 
-then open IntelliJ, import the pom.xml and run `IsiSubscriber::main` from there
+(deprecated) first genereate the SerDes classes with the Avro schema : `mvn generate-sources`
 
 ### create events (mockup)
 
 run `./scripts/create_events.py`
+
+
+### checks what happens
+
+The python server will raise a 500 error every even event. This is very rough but useful to see what happens with the retryable topics.
+
+To check what happens, you can use the kafka command line utilities to:
+
+- list the topics
+
+```
+# example
+kafka-topics.sh --bootstrap-server localhost:29092 --list
+```
+
+- check what happens in a topic
+
+```
+# example
+kafka-console-consumer.sh --bootstrap-server localhost:29092 --topic products.public.product-retry-0 --from-beginning
+```
+
 
 ## References
 
